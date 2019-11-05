@@ -10,8 +10,10 @@ class gameField {
       this.goal.src = 'img/goal.png'
   }
   draw(){
+      // DIBUJA EL CAMPO:
       ctx.drawImage(this.img, this.x, this.y, this.width, this.height)
-      ctx.drawImage(this.goal, (this.width/2)-25, 40, 50, 100)
+      //PORTERÍAS:
+      ctx.drawImage(this.goal, (this.width/2)-25, 0, 50, 100)
       ctx.drawImage(this.goal, (this.width/2)-25, canvas.height-115, 50, 100)
   }
 }
@@ -20,15 +22,17 @@ class Player {
     constructor() {
         this.x = 200;
         this.y = canvas.height-75;
-        this.width = 50;
+        this.width = 50; 
         this.height = 60;
         this.animate = 0;
         this.img = new Image();
         this.img.src = 'img/playerSprite.png';
         this.face = 0;
-        this.vx = 0;
-        this.vy = 0;
-        this.stamina = 1000;
+        this.vx = 0; // Constante de velocidad en x
+        this.vy = 0; // Constante de velocidad en y
+        this.stamina = 1000; //1s de stamina para el turbo
+        this.speed = 0;
+        this.turboStatus = false;
   }
 
     draw(){ //1000*60
@@ -122,200 +126,76 @@ class Player {
       this.face = 6
     }
   }
-  moveLeft(){
-    //DELAY EN LA FRENADA VERTICAL DESCEDENTE
-      if (this.vy >= 2 && this.vy<3){
-        this.vy -= 0.25
-      } else if (this.vy>=1 && this.vy<2){
-        this.vy -= 0.375
-      } else if (this.vy<1 && this.vy>=0){
-        this.vy = 0
-      } else if (this.vy > 3){
-        this.vy -= 0.3
-      }
-    
-    //DELAY EN LA FRENADA VERTICAL ASCENDENTE
 
-      else if (this.vy < -2 && this.vy > -3){
-        this.vy -= 0.25
-      } else if (this.vy < -1 && this.vy >= -2){
-        this.vy -= 0.375
-      } else if (this.vy<0 && this.vy>=-1){
-        this.vy = 0
-      } else if (this.vy < -3){
-        this.vy += 0.3
-      }
-    
-    // DELAY EN LA FRENADA/ACCELERACIÓN HORIZONTAL
-
-    if (this.vx > -3 && this.vx <= -2){
-      this.vx -=0.25
-    } else if (this.vx > -2 && this.vx <=-1){
-      this.vx -= 0.16
-    } else if (this.vx > -1 && this.vx <= 0){
-      this.vx -= 0.1
-    } else if (this.vx > 0 && this.vx <= 1){
-      this.vx -= 0.5
-    } else if (this.vx > 1 && this.vx <= 2){
-      this.vx -= 0.75
-    } else if (this.vx >2){
-      this.vx -= 1
-    } else if (this.vx <= -3){
-      this.vx = -3
-    }
+  upLeft(){
+      this.speed -=.3
+      this.vx = this.vy
+      this.vy = this.vx
   }
-  moveRight(){
-    
-    //DELAY EN LA FRENADA VERTICAL DESCEDENTE
-    if (this.vy >= 2 && this.vy<3){
-      this.vy -= 0.25
-    } else if (this.vy>=1 && this.vy<2){
-      this.vy -= 0.375
-    } else if (this.vy<1 && this.vy>=0){
-      this.vy = 0
-    } else if (this.vy > 3){
-      this.vy -= .3
-    }
-  //DELAY EN LA FRENADA VERTICAL ASCENDENTE
-    else if (this.vy < -2 && this.vy > -3){
-      this.vy -= 0.25
-    } else if (this.vy < -1 && this.vy >= -2){
-      this.vy -= 0.375
-    } else if (this.vy<0 && this.vy>=-1){
-      this.vy = 0
-    } else if (this.vy < -3){
-      this.vy += .3
-    }
-    
-    // DELAY EN LA ACCELERACIÓN
-
-    if (this.vx > -3 && this.vx <= -2){
-      this.vx +=0.1
-    } else if (this.vx > -2 && this.vx <=-1){
-      this.vx += 0.25
-    } else if (this.vx > -1 && this.vx <= 0){
-      this.vx += 0.5
-    } else if (this.vx > 0 && this.vx <= 1){
-      this.vx += 0.25
-    } else if (this.vx > 1 && this.vx <= 2){
-      this.vx += 0.375
-    } else if (this.vx >2){
-      this.vx += 0.5
-    } else if (this.vx >= 3){
-      this.vx = 3
-    } else if (this.vx < -3){
-      this.vx +=0.3
-    }
+  downLeft(){
+      this.speed -=.3
+      this.vx = this.vy
+      this.vy = this.vx
+  }
+  upRight(){
+      this.speed -=.3
+      this.vx = this.speed
+      this.vy = -this.speed
+  }
+  downRight(){
+      this.speed -=.3
+      this.vy = this.vx
+      this.vx = this.vy
+  }
+  left(){
+    this.speed -=.3
+    this.vy = 0;
+    this.vx = -this.speed
+  }
+  right(){
+    this.speed -=.3
+    this.vy = 0
+    this.vx = this.speed
 
   }
-  moveBack(){
-
-    //DELAY EN LA FRENADA VERTICAL DESCEDENTE
-    if (this.vx >= 2 && this.vx<3){
-      this.vx -= 0.25
-    } else if (this.vx>=1 && this.vx<2){
-      this.vx -= 0.375
-    } else if (this.vx<1 && this.vx>=0){
-      this.vx = 0
-    } else if (this.vx > 3){
-      this.vx -= .3
-    }
-  //DELAY EN LA FRENADA VERTICAL ASCENDENTE
-    else if (this.vx < -2 && this.vx > -3){
-      this.vx -= 0.25
-    } else if (this.vx < -1 && this.vx >= -2){
-      this.vx -= 0.375
-    } else if (this.vx<0 && this.vx>=-1){
-      this.vx = 0
-    } else if (this.vx < -3){
-      this.vx += .3
-    }
-    
-    // DELAY EN LA ACCELERACIÓN
-
-    if (this.vy > -3 && this.vy <= -2){
-      this.vy = 0
-    } else if (this.vy > -2 && this.vy <=-1){
-      this.vy += 0.25
-    } else if (this.vy > -1 && this.vy <= 0){
-      this.vy += 0.5
-    } else if (this.vy > 0 && this.vy <= 1){
-      this.vy += 0.25
-    } else if (this.vy > 1 && this.vy <= 2){
-      this.vy += 0.375
-    } else if (this.vy >2){
-      this.vy += 0.5
-    } else if (this.vy >= 3){
-      this.vy = 3
-    } else if (this.vy < -3){
-      this.vy += 0.3
-    }
+  down(){
+    this.speed -=.3
+    this.vx = 0;
+    this.vy = this.speed;
   }
-  moveUp(){
+  up(){
     //DELAY EN LA FRENADA VERTICAL DESCEDENTE
-    if (this.vx >= 2 && this.vx <3){
-      this.vx += 0.25
-    } else if (this.vx>=1 && this.vx<2){
-      this.vx += 0.375
-    } else if (this.vx<1 && this.vx>=0){
-      this.vx = 0
-    } else if (this.vx > 3){
-      this.vx -= .3
-    }
-
-  //DELAY EN LA FRENADA VERTICAL ASCENDENTE
-    else if (this.vx < -2 && this.vx > -3){
-      this.vx += 0.25
-    } else if (this.vx < -1 && this.vx >= -2){
-      this.vx += 0.375
-    } else if (this.vx<0 && this.vx>=-1){
-      this.vx = 0
-    } else if (this.vx < -3){
-      this.vx += .3
-    }
-    
-    // DELAY EN LA ACCELERACIÓN
-
-    if (this.vy > -3 && this.vy <= -2){
-      this.vy -=0.1
-    } else if (this.vy > -2 && this.vy <=-1){
-      this.vy -= 0.25
-    } else if (this.vy > -1 && this.vy <= 0){
-      this.vy -= 0.5
-    } else if (this.vy > 0 && this.vy <= 1){
-      this.vy -= 0.25
-    } else if (this.vy > 1 && this.vy <= 2){
-      this.vy -= 0.375
-    } else if (this.vy >2){
-      this.vy -= 0.5
-    } else if (this.vy >= -3){
-      this.vy += .3
+    this.speed -=.3
+    this.vx = 0
+    this.vy = -this.speed
+  }
+  run(){
+    if (this.speed>2){ //Límite de velocidad
+      this.speed = 2
+    } else if (this.speed>1.5 && this.speed <=2){ 
+      this.speed += 0.75
+    } else if (this.speed>1 && this.speed <=1.5){
+      this.speed += 0.55
+    } else if (this.speed>=0.6 && this.speed <= 1){ 
+      this.speed += 0.35
+    } else if (this.speed>0.3 && this.speed <= 0.6){ 
+      this.speed += 0.25
+    } else if (this.speed>=0 && this.speed <= 0.3){
+      this.speed += 0.65
+    } else if (this.speed<0){
+      this.speed +=0.65
     }
   }
 
   // HAY QUE CHECAR LA DURACIÓN DEL SPRINT
   turbo(){
-    this.stamina -= 1
-    if (this.vy >= 0 && this.vx ==0){
-      this.vy += 1
-    } else if (this.vy < 0 && this.vx == 0){
-      this.vy -= 1
-    } else if (this.vy > 0 && this.vx < 0){
-      this.vx -= 1
-      this.vy += 1
-    } else if (this.vy < 0 && this.vx < 0){
-      this.vx -= 1
-      this.vy -= 1
-    } else if (this.vy > 0 && this.vx > 0){
-      this.vx += 1
-      this.vy += 1
-    } else if (this.vy < 0 && this.vx > 0){
-      this.vx += 1
-      this.vy -= 1
-    } else if (this.vy == 0 && this.vx > 0){
-      this.vx += 1
-    } else if (this.vy == 0 && this.vx < 0){
-      this.vx -=1
+    if (this.turboStatus){
+      if (this.stamina>0){
+        this.speed +=1
+        this.stamina -= 1
+      } else{
+        return
+      }
     }
   }
 }
@@ -332,8 +212,8 @@ class Rival {
       this.img = new Image();
       this.img.src = 'img/rivalSprite.png';
       this.face = 0;
-      this.vx = 0;
-      this.vy = 0;
+      this.vx = 1;
+      this.vy = 1;
       this.stamina = 1000;
     }
     //FUNCIONA
@@ -414,27 +294,39 @@ class Rival {
     }
 
     move(){
-      if (player.x>this.x){
+      if (player.x>this.x && player.y>this.y){
         this.moveRight()
-      } else if (player.x < this.x){
-        this.moveLeft()
-      } else if (player.y > this.y){
         this.moveDown()
-      } else if (player.y < this.y){
+      } else if (player.x < this.x && player.y>this.y){
+        this.moveLeft()
+        this.moveDown()
+      } else if (player.x < this.x && player.y < this.y){
+        this.moveLeft()
         this.moveUp()
+      } else if (player.x > this.x && player.y < this.y){
+        this.moveUp()
+        this.moveRight()
+      } else if (player.x == this.x && player.y > this.y){
+        this.moveDown()
+      } else if (player.x == this.x && player.y < this.y){
+        this.moveUp()
+      } else if (player.x > this.x && player.y == this.y){
+        this.moveRight()
+      } else if (player.x < this.x && player.y == this.y){
+        this.moveLeft()
       }
     }
     moveUp(){
-      this.y -= 1
+      this.y -= this.vy
     }
     moveDown(){
-      this.y += 1
+      this.y += this.vy
     }
     moveLeft(){
-      this.x -= 1
+      this.x -= this.vx
     }
     moveRight(){
-      this.x += 1
+      this.x += this.vx
     }
     
     /*
