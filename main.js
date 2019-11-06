@@ -60,10 +60,13 @@ function checkColitions(){
 function drawHit(){
     if (counter > 0){
         if(hit.display){
-        ctx.drawImage(hit, player.x, player.y, 50, 50)
+            ctx.drawImage(hit, player.x, player.y, 50, 50)
+            console.log('golpe!')
+            counter--
         }
-        counter--
+        
     } else if (counter == 0){
+        hit.display = false
         return
     }
 }
