@@ -8,18 +8,29 @@ class gameField {
       this.img.src = 'img/GameField.png'
       this.goal = new Image();
       this.goal.src = 'img/goal.png'
+      this.fans = new Image();
+      this.fans.src = 'img/fansSprite.jpeg'
+      this.fans.animate = 0;
   }
   draw(){
       // DIBUJA EL CAMPO:
       ctx.drawImage(this.img, this.x, this.y, this.width, this.height)
       //PORTERÍAS:
-      ctx.drawImage(this.goal, (this.width/2)-25, 0, 50, 100)
+      ctx.drawImage(this.goal, (this.width/2)-25, 45, 50, 100)
       ctx.drawImage(this.goal, (this.width/2)-25, canvas.height-115, 50, 100)
+      this.fans.animate > 2 ? this.fans.animate = 0 : this.fans.animate
+      ctx.drawImage(
+        this.fans, this.fans.animate * 638, 0, 638, 300,
+        15, 0, canvas.width / 2, 70)
+      ctx.drawImage(
+          this.fans,this.fans.animate*638, 0, 638 ,300,
+          canvas.width/2,0,canvas.width/2 -15,70)
+          
   }
 }
 
 class Player {
-    constructor() {
+    constructor(type) {
         this.x = 200;
         this.y = canvas.height-75;
         this.width = 50; 
@@ -30,9 +41,12 @@ class Player {
         this.face = 0;
         this.vx = 0; // Constante de velocidad en x
         this.vy = 0; // Constante de velocidad en y
-        this.stamina = 1000; //1s de stamina para el turbo
+        this.stamina = 10000; //1s de stamina para el turbo
         this.speed = 0;
         this.turboStatus = false;
+        this.attackRadius = 5;
+        this.cx = this.x + (this.width/2)
+        this.cy = this.y + (this.height/2)
   }
 
     draw(){ //1000*60
@@ -126,49 +140,51 @@ class Player {
       this.face = 6
     }
   }
+  //REVISAR LA VELOCIDAD EN DIAGONAL 
 
   upLeft(){
-      this.speed -=.3
-      this.vx = this.vy
-      this.vy = this.vx
+    if (this.speed>0.6){this.speed -=.5}
+    this.vx = -(this.speed/Math.sqrt((this.speed**2)+(this.speed**2)))
+    this.vy = -(this.speed/Math.sqrt((this.speed**2)+(this.speed**2)))
+    console.log('upLeft FUNCITON')
   }
   downLeft(){
-      this.speed -=.3
-      this.vx = this.vy
-      this.vy = this.vx
+    if (this.speed>0.6){this.speed -=.5}
+    this.vx = -(this.speed/Math.sqrt((this.speed**2)+(this.speed**2)))
+    this.vy = (this.speed/Math.sqrt((this.speed**2)+(this.speed**2)))
   }
   upRight(){
-      this.speed -=.3
-      this.vx = this.speed
-      this.vy = -this.speed
+    if (this.speed>0.6){this.speed -=.5}
+    this.vx += (this.speed/Math.sqrt((this.speed**2)+(this.speed**2)))
+    this.vy = -(this.speed/Math.sqrt((this.speed**2)+(this.speed**2)))
   }
   downRight(){
-      this.speed -=.3
-      this.vy = this.vx
-      this.vx = this.vy
+    if (this.speed>0.6){this.speed -=.5}
+    this.vy = (this.speed/Math.sqrt((this.speed**2)+(this.speed**2)))
+    this.vx = (this.speed/Math.sqrt((this.speed**2)+(this.speed**2)))
   }
+  //
   left(){
-    this.speed -=.3
+    if (this.speed>0.6){this.speed -=.5}
     this.vy = 0;
     this.vx = -this.speed
   }
   right(){
-    this.speed -=.3
+    if (this.speed>0.6){this.speed -=.5}
     this.vy = 0
     this.vx = this.speed
-
   }
   down(){
-    this.speed -=.3
+    if (this.speed>0.6){this.speed -=.5}
     this.vx = 0;
     this.vy = this.speed;
   }
   up(){
-    //DELAY EN LA FRENADA VERTICAL DESCEDENTE
-    this.speed -=.3
+    if (this.speed>0.6){this.speed -=.5}
     this.vx = 0
     this.vy = -this.speed
   }
+
   run(){
     if (this.speed>2){ //Límite de velocidad
       this.speed = 2
@@ -191,30 +207,56 @@ class Player {
   turbo(){
     if (this.turboStatus){
       if (this.stamina>0){
-        this.speed +=1
+        console.log(this.stamina)
+        this.speed +=2
         this.stamina -= 1
       } else{
         return
       }
+    } else {
+      this.speed -=2
     }
+  }
+
+  flagged(e){
+    return (
+      this.x+(this.width*0.25) < e.x+e.width&&
+      this.x+(this.width*0.75) > e.x &&
+      this.y+(this.height*0.25) < e.y + e.height &&
+      this.y+(this.height*0.75) > e.y
+    )
+  }
+  tackled(e){
+    return (this.getDistance(e)<e.actionRadius+this.attackRadius)
+  }
+  getDistance(e){
+    let dx = e.cx - this.cx
+    let dy = e.cy - this.cy
+    return Math.sqrt(Math.pow(dx,2)+Math.pow(dy,2))
   }
 }
 
 
 
 class Rival {
-    constructor(){
-      this.x = Math.floor(Math.random()*canvas.width);
-      this.y = Math.floor(Math.random()*canvas.height - 60);
+    constructor(x, y){
+      this.x = x;
+      this.y = y;
       this.width = 50;
       this.height = 60;
       this.animate = 0;
       this.img = new Image();
       this.img.src = 'img/rivalSprite.png';
       this.face = 0;
-      this.vx = 1;
-      this.vy = 1;
+      this.vx = 0;
+      this.vy = 0;
       this.stamina = 1000;
+      this.countback = true;
+      this.speed = (1+(Math.random()*1))
+      this.startAttack = false;
+      this.actionRadius = 5;
+      this.cx = this.x + (this.width/2)
+      this.cy = this.y + (this.height/2)
     }
     //FUNCIONA
     draw(){ //1000*60
@@ -272,88 +314,139 @@ class Rival {
           break;
       }
     }
-    // FUNCIONA
+
     changePosition() {
-      if (player.y > this.y && player.x == this.x){
-        this.face = 4
-      } else if (player.y < this.y && player.x == this.x){
-        this.face = 0
-      } else if (player.y > this.y && player.x < this.x){
-        this.face = 5
-      } else if (player.y < this.y && player.x < this.x){
-        this.face = 7
-      } else if (player.y > this.y && player.x > this.x){
-        this.face = 3
-      } else if (player.y < this.y && player.x > this.x){
-        this.face = 1
-      } else if (player.y == this.y && player.x > this.x){
-        this.face = 2
-      } else if (player.y == this.y && player.x < this.x){
-        this.face = 6
+      if (this.x > player.x && this.x < player.x+player.width && this.y < player.y){
+        this.face = 4 // down
+      } else if (this.x > player.x && this.x < player.x+player.width && this.y > player.y){
+        this.face = 0 // up
+      } else if (this.y > player.y && this.x> player.x+player.width){
+        this.face = 5 // downleft OK
+      } else if (this.y > player.y+player.height && this.x> player.x+player.width){
+        this.face = 7 //upleft OK
+      } else if (this.x < player.x && this.y < player.y){
+        this.face = 3 //downright OK
+      } else if (this.y > player.y+player.height && this.x < player.x){
+        this.face = 1 //upright OK
+      } else if (this.y > player.y && this.y < player.y+player.height && this.x < player.x){
+        this.face = 2 //right
+      } else if (this.y > player.y && this.y < player.y+player.height && this.x > player.x){
+        this.face = 6 // left
+      }
+    }
+
+    isTouching(e) {
+      // algo está tratando de ocupar el mismo espacio en canvas que flash
+      return (
+        this.x < e.x + e.width &&
+        this.x + this.width > e.x &&
+        this.y < e.y + e.height &&
+        this.y + this.height > e.y
+      )
+    }
+    
+    checkBack(){ // OK ralentiza en 'y' durante 4 frames para la ilusión de ganar la espalda
+      if (this.countback){ 
+        if (player.y < this.y){ 
+          this.speed -= 0.5
+          this.countback = false
+        }
+      }
+    }
+
+    getDistance(){
+      let dx = this.cx - player.cx
+      let dy = this.cy - player.cy
+      return Math.sqrt(Math.pow(dx,2)+Math.pow(dy,2))
+    }
+    /*
+    jump(){
+
+      if(this.getDistance()<this.actionRadius + player.attackRadius){
+        let random = Math.floor(Math.random()*2)
+        let playerRivalVector = Math.atan(dy/dx)
+        if(random === 0){
+          this.x += 
+          this.y = 
+        } else if (random ===1){
+          this.x +=
+          this.y +=
+        }
+      }
+
+    }*/
+
+    // FUNCIÓN PARA CORRER COMO TARADO Y PASARSE AL UGADOR POR ARRIBA O POR ABAJO
+
+    /*tackleSprint(){
+
+    }*/
+    checkVerticalAttack(){ // OK Chequea que el jugador esté cerca para atacarle en el eje de Y
+      if (player.y < this.y + 100){
+        this.startAttack = true
       }
     }
 
     move(){
-      if (player.x>this.x && player.y>this.y){
-        this.moveRight()
-        this.moveDown()
-      } else if (player.x < this.x && player.y>this.y){
-        this.moveLeft()
-        this.moveDown()
-      } else if (player.x < this.x && player.y < this.y){
-        this.moveLeft()
-        this.moveUp()
-      } else if (player.x > this.x && player.y < this.y){
-        this.moveUp()
-        this.moveRight()
-      } else if (player.x == this.x && player.y > this.y){
-        this.moveDown()
-      } else if (player.x == this.x && player.y < this.y){
-        this.moveUp()
-      } else if (player.x > this.x && player.y == this.y){
-        this.moveRight()
-      } else if (player.x < this.x && player.y == this.y){
-        this.moveLeft()
+      if (this.startAttack){
+        if (player.x > this.x && player.y > this.y){
+          this.downRight()
+        } else if (player.x < this.x && player.y>this.y){
+          this.downLeft()
+        } else if (player.x < this.x && player.y < this.y){
+          this.upLeft()
+        } else if (player.x > this.x && player.y < this.y){
+          this.upRight()
+        } else if (player.x == this.x && player.y > this.y){
+          this.down()
+        } else if (player.x == this.x && player.y < this.y){
+          this.up()
+        } else if (player.x > this.x && player.y == this.y){
+          this.right()
+        } else if (player.x < this.x && player.y == this.y){
+          this.left()
+        }
       }
     }
-    moveUp(){
-      this.y -= this.vy
+    upLeft(){
+      if (this.speed>0.6){this.speed -=.5}
+      this.vx = -(this.speed/Math.sqrt((this.speed**2)+(this.speed**2)))
+      this.vy = -(this.speed/Math.sqrt((this.speed**2)+(this.speed**2)))
     }
-    moveDown(){
-      this.y += this.vy
+    downLeft(){
+      if (this.speed>0.6){this.speed -=.5}
+      this.vx = -(this.speed/Math.sqrt((this.speed**2)+(this.speed**2)))
+      this.vy = (this.speed/Math.sqrt((this.speed**2)+(this.speed**2)))
     }
-    moveLeft(){
-      this.x -= this.vx
+    upRight(){
+      if (this.speed>0.6){this.speed -=.5}
+      this.vx = (this.speed/Math.sqrt((this.speed**2)+(this.speed**2)))
+      this.vy = -(this.speed/Math.sqrt((this.speed**2)+(this.speed**2)))
     }
-    moveRight(){
-      this.x += this.vx
+    downRight(){
+      if (this.speed>0.6){this.speed -=.5}
+      this.vy = (this.speed/Math.sqrt((this.speed**2)+(this.speed**2)))
+      this.vx = (this.speed/Math.sqrt((this.speed**2)+(this.speed**2)))
+    }
+    left(){
+      if (this.speed>0.6){this.speed -=.5}
+      this.vy = 0;
+      this.vx = -this.speed
+    }
+    right(){
+      if (this.speed>0.6){this.speed -=.5}
+      this.vy = 0
+      this.vx = this.speed
+    }
+    down(){
+      if (this.speed>0.6){this.speed -=.5}
+      this.vx = 0;
+      this.vy = this.speed;
+    }
+    up(){
+      if (this.speed>0.6){this.speed -=.5}
+      this.vx = 0
+      this.vy = -this.speed
     }
     
-    /*
-    **
-    **
-    CÓDIGO DE CAT BRAWLER PARA QUE SIGAN AL GATO
-    **
-    **
-    moveDown(boundarie) {
-        if (this.y + this.speed + this.height < boundarie) this.y += this.speed;
-      }
-      moveUp(boundarie) {
-        if (this.y - this.speed > boundarie) this.y -= this.speed;
-      }
-      moveRight(boundarie) {
-        if (this.x + this.speed + this.width < boundarie) this.x += this.speed;
-      }
-      moveLeft(boundarie) {
-        if (this.x - this.speed > boundarie) this.x -= this.speed;
-      }
-      move(boundTop, boundRight, boundBottom, boundLeft, target) {
-        let { x, y, width, height } = target;
-        let xTargetCenter = x + width / 2 - this.width / 2;
-        let yTargetCenter = y + height / 2 - this.height / 2;
-        if (this.x < xTargetCenter) this.moveRight(boundRight);
-        if (this.x > xTargetCenter) this.moveLeft(boundLeft);
-        if (this.y < yTargetCenter) this.moveDown(boundBottom);
-        if (this.y > yTargetCenter) this.moveUp(boundTop);
-      }*/ 
 }
