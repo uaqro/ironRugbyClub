@@ -19,6 +19,10 @@ let rivalX;
 let hit = new Image();
 hit.img = 'img/golpe.png';
 hit.display = false;
+let counter = 0 //Frames para el hit display
+let tackles = 0;
+let tackleImage = new Image();
+tackleImage.src = 'img/tackle.png'
 
 
 // ** GAME FUNCTIONS **
@@ -39,14 +43,14 @@ function checkColitions(){
     if (player.x + player.width*0.75 > canvas.width-25){
         gameOver()
     }
-
     rivals.forEach((rival)=>{ //flagged
-        /*if(player.flagged(rival)){
-            if (player.speed > 0){player.speed -=0.75}
+        if(player.flagged(rival)){
+            if (player.speed > 0){player.speed -=0.25}
             hit.display = true
-            //drawHit()
+            counter = 10
             console.log('touch')
-        }*/
+            tackles++
+        }
         if (player.tackled(rival)){ //tackled
             gameOver()
             console.log('tackled')
@@ -54,8 +58,13 @@ function checkColitions(){
     })
 }
 function drawHit(){
-    if(hit.display){
-    ctx.drawImage(hit, player.x, player.y, 50, 50)
+    if (counter > 0){
+        if(hit.display){
+        ctx.drawImage(hit, player.x, player.y, 50, 50)
+        }
+        counter--
+    } else if (counter == 0){
+        return
     }
 }
 function drawScore(){ // YA FUNCIONA
@@ -66,11 +75,12 @@ function drawScore(){ // YA FUNCIONA
     ctx.stroke();*/
     ctx.globalAlpha = 0.3;
     ctx.fillStyle = 'black'
-    ctx.fillRect(22,65,250,15);
+    ctx.fillRect(22,65,450,15);
     ctx.globalAlpha = 1.0;
     ctx.fillStyle = 'white';
     ctx.font = '20px Arial'
     ctx.fillText(`Score:`, 22, 75)
+    ctx.fillText(`Tackled:`, 275, 75)
     //ctx.fillText(`Level: ${level}`, 570, 30)
     ctx.beginPath();
     ctx.arc(100, 68, 10, 0, 2 * Math.PI, false);
@@ -133,6 +143,15 @@ function drawScore(){ // YA FUNCIONA
         ctx.strokeStyle = '#FFFFFF';
         ctx.stroke();
     }
+    if(tackles >=1){
+        ctx.drawImage(tackleImage, 350, 48, 40, 40)
+    }
+    if(tackles >=2){
+        ctx.drawImage(tackleImage, 390, 48, 40, 40)
+    }
+    if(tackles >=3){
+        ctx.drawImage(tackleImage, 430, 48, 40, 40)
+    }
 }
 function winCheck(){
     if (player.y <= 138){
@@ -169,11 +188,11 @@ function dontStack(){
 // FUNCIONES DE RIVALES
 function createRivals(){ //FUNCIONA
     let rivalXStart = [25, 350, 75, 200, 150, 250, 25, 75]
-    let rivalYStart = [canvas.height-250, canvas.height-450, canvas.height-600]
+    let rivalYStart = [canvas.height-200, canvas.height-400, canvas.height-500]
     for(i=0; i<Math.floor((2/2)*3);i++){
         rivals.push(new Rival(rivalXStart[i], rivalYStart[i]))
         rivals.push(new Rival(rivalXStart[i] + (Math.random()*100)+50, rivalYStart[i]))
-        rivals.push(new Rival(rivalXStart[i] + (Math.random()*150)+150, rivalYStart[i]))
+        //rivals.push(new Rival(rivalXStart[i] + (Math.random()*150)+150, rivalYStart[i]))
     }
 }
 function attackRivals(){ // FUNCIONA
@@ -328,6 +347,7 @@ function update(){
     if(player.turboStatus){
         player.stamina--
     }
+    drawHit()
     checkColitions()
     attackRivals()
     drawScore()

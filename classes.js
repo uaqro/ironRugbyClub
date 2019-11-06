@@ -348,7 +348,7 @@ class Rival {
     checkBack(){ // OK ralentiza en 'y' durante 4 frames para la ilusión de ganar la espalda
       if (this.countback){ 
         if (player.y < this.y){ 
-          this.speed -= 0.5
+          if (this.speed > 0.5) {this.speed -= 0.5}
           this.countback = false
         }
       }
