@@ -30,12 +30,12 @@ class gameField {
 }
 
 class Player {
-    constructor(type) {
+    constructor() {
         this.x = 200;
         this.y = canvas.height-75;
         this.width = 50; 
         this.height = 60;
-        this.animate = 0;
+        this.animate = 4;
         this.img = new Image();
         this.img.src = 'img/playerSprite.png';
         this.face = 0;
@@ -47,12 +47,28 @@ class Player {
         this.attackRadius = 5;
         this.cx = this.x + (this.width/2)
         this.cy = this.y + (this.height/2)
+        this.countdown = true;
+        this.animateArray = [0,1,2,3,2,1]
+        this.score = 0
   }
 
     draw(){ //1000*60
-      
-      this.animate>3 ? this.animate = 0 : this.animate;
-      
+        
+        
+      this.animate
+      if(this.countdown){
+        if (this.animate>0){
+        this.animate--
+        } else if (this.animate==0){
+          this.countdown = false
+        }
+      } else if(!this.countdown){
+        if (this.animate < 3){
+          this.animate++
+        } else if (this.animate > 3){
+          this.countdown = true
+        }
+      }
       switch(this.face){
         case 0:
           ctx.drawImage(
@@ -235,8 +251,14 @@ class Player {
     return Math.sqrt(Math.pow(dx,2)+Math.pow(dy,2))
   }
 }
-
-
+class Player2 extends Player{
+  constructor(y,width,height, animate, face, vx, vy, stamina, speed, turboStatus, attackRadius, cx, cy, countdown, animateArray, score){
+    super(y,width,height, animate, face, vx, vy, stamina, speed, turboStatus, attackRadius, cx, cy, countdown, animateArray,score)
+    this.x = 750;
+    this.img = new Image();
+    this.img.src = 'img/player2Sprite.png';
+  }
+}
 
 class Rival {
     constructor(x, y){
@@ -247,7 +269,7 @@ class Rival {
       this.animate = 0;
       this.img = new Image();
       this.img.src = 'img/rivalSprite.png';
-      this.face = 0;
+      this.face = 4;
       this.vx = 0;
       this.vy = 0;
       this.stamina = 1000;
@@ -257,6 +279,7 @@ class Rival {
       this.actionRadius = 5;
       this.cx = this.x + (this.width/2)
       this.cy = this.y + (this.height/2)
+      this.playernum;
     }
     //FUNCIONA
     draw(){ //1000*60
@@ -316,94 +339,72 @@ class Rival {
     }
 
     changePosition() {
-      if (this.x > player.x && this.x < player.x+player.width && this.y < player.y){
-        this.face = 4 // down
-      } else if (this.x > player.x && this.x < player.x+player.width && this.y > player.y){
-        this.face = 0 // up
-      } else if (this.y > player.y && this.x> player.x+player.width){
-        this.face = 5 // downleft OK
-      } else if (this.y > player.y+player.height && this.x> player.x+player.width){
-        this.face = 7 //upleft OK
-      } else if (this.x < player.x && this.y < player.y){
-        this.face = 3 //downright OK
-      } else if (this.y > player.y+player.height && this.x < player.x){
-        this.face = 1 //upright OK
-      } else if (this.y > player.y && this.y < player.y+player.height && this.x < player.x){
-        this.face = 2 //right
-      } else if (this.y > player.y && this.y < player.y+player.height && this.x > player.x){
-        this.face = 6 // left
+      if (this.startAttack){ 
+        if (this.x > this.playernum.x && this.x < this.playernum.x+this.playernum.width && this.y < this.playernum.y){
+          this.face = 4 // down
+        } else if (this.x > this.playernum.x && this.x < this.playernum.x+this.playernum.width && this.y > this.playernum.y){
+          this.face = 0 // up
+        } else if (this.y > this.playernum.y && this.x> this.playernum.x+this.playernum.width){
+          this.face = 5 // downleft OK
+        } else if (this.y > this.playernum.y+this.playernum.height && this.x> this.playernum.x+this.playernum.width){
+          this.face = 7 //upleft OK
+        } else if (this.x < this.playernum.x && this.y < this.playernum.y){
+          this.face = 3 //downright OK
+        } else if (this.y > this.playernum.y+this.playernum.height && this.x < this.playernum.x){
+          this.face = 1 //upright OK
+        } else if (this.y > this.playernum.y && this.y < this.playernum.y+this.playernum.height && this.x < this.playernum.x){
+          this.face = 2 //right
+        } else if (this.y > this.playernum.y && this.y < this.playernum.y+this.playernum.height && this.x > this.playernum.x){
+          this.face = 6 // left
+        }
       }
-    }
-
-    isTouching(e) {
-      // algo está tratando de ocupar el mismo espacio en canvas que flash
-      return (
-        this.x < e.x + e.width &&
-        this.x + this.width > e.x &&
-        this.y < e.y + e.height &&
-        this.y + this.height > e.y
-      )
     }
     
     checkBack(){ // OK ralentiza en 'y' durante 4 frames para la ilusión de ganar la espalda
-      if (this.countback){ 
-        if (player.y < this.y){ 
-          if (this.speed > 0.5) {this.speed -= 0.5}
-          this.countback = false
+      if (this.startAttack){
+        if (this.countback){ 
+          if (this.playernum.y < this.y){ 
+            if (this.speed > 0.5) {this.speed -= 0.5}
+            this.countback = false
+          }
         }
       }
     }
 
-    getDistance(){
-      let dx = this.cx - player.cx
-      let dy = this.cy - player.cy
-      return Math.sqrt(Math.pow(dx,2)+Math.pow(dy,2))
+    getDistance(potato){
+        console.log('hi')
+        let dx = this.cx - potato.cx
+        let dy = this.cy - potato.cy
+        return Math.sqrt(Math.pow(dx,2)+Math.pow(dy,2))
     }
-    /*
-    jump(){
-
-      if(this.getDistance()<this.actionRadius + player.attackRadius){
-        let random = Math.floor(Math.random()*2)
-        let playerRivalVector = Math.atan(dy/dx)
-        if(random === 0){
-          this.x += 
-          this.y = 
-        } else if (random ===1){
-          this.x +=
-          this.y +=
-        }
-      }
-
-    }*/
-
-    // FUNCIÓN PARA CORRER COMO TARADO Y PASARSE AL UGADOR POR ARRIBA O POR ABAJO
-
-    /*tackleSprint(){
-
-    }*/
-    checkVerticalAttack(){ // OK Chequea que el jugador esté cerca para atacarle en el eje de Y
-      if (player.y < this.y + 100){
+    
+    checkAttack(){
+      console.log('checking distances')
+      if(this.getDistance(player1)>this.getDistance(player2) && distance < 100){
         this.startAttack = true
+        this.playernum = player1
+      } else if (this.getDistance(player1)<this.getDistance(player2) && distance < 100){
+        this.startAttack = true
+        this.playernum = player2
       }
     }
-
     move(){
       if (this.startAttack){
-        if (player.x > this.x && player.y > this.y){
+        if (this.playernum.x > this.x && this.playernum.y > this.y){
           this.downRight()
-        } else if (player.x < this.x && player.y>this.y){
+        } else if (this.playernum.x < this.x && this.playernum.y>this.y){
           this.downLeft()
-        } else if (player.x < this.x && player.y < this.y){
+        } else if (this.playernum.x < this.x && this.playernum.y < this.y){
           this.upLeft()
-        } else if (player.x > this.x && player.y < this.y){
+        } else if (this.playernum.x > this.x && this.playernum.y < this.y){
           this.upRight()
-        } else if (player.x == this.x && player.y > this.y){
+        } else if (this.playernum.x == this.x && this.playernum.y > this.y){
           this.down()
-        } else if (player.x == this.x && player.y < this.y){
+        } else if (this.playernum.x == this.x && this.playernum.y < this.y){
           this.up()
-        } else if (player.x > this.x && player.y == this.y){
+        } else if (this.playernum.x > this.x && this.playernum.y == this.y){
           this.right()
-        } else if (player.x < this.x && player.y == this.y){
+        } else if (this.playernum.x < this.x && this.playernum.y == this.y){
           this.left()
         }
       }

@@ -1,0 +1,29 @@
+canvas{
+    display:flex;
+    align-items: center;
+    align-self:center;
+    justify-content:center;
+    height: 75vh;
+}
+
+.header img{
+    display:flex;
+    height: 150px;
+    width: 150px;
+}
+.header{
+    background-color: #1A10FF;
+    margin-left: 14.5%;
+    margin-right: 14.5%;
+}
+body{
+    display:flex;
+    flex-direction:column;
+    justify-content: center;
+    background-image: url('img/wallpaperr.jpg');
+    background-size:cover;
+}
+.canvas-around{
+    display:flex;
+    justify-content:center;
+}
