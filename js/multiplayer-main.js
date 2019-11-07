@@ -187,7 +187,8 @@ function createRivals(){ //FUNCIONA
         rivals.push(new Rival(rivalXStart[i] + (Math.random()*150)+150, rivalYStart[i]))
     }
 }
-function attackRivals(){ // FUNCIONA
+
+function attackRivals(){ // FUNCIONA    
     rivals.forEach((e)=> {
          if (frames%2===0){
             e.changePosition()
@@ -197,6 +198,7 @@ function attackRivals(){ // FUNCIONA
          }
          if (frames%8===0){
             e.move()
+            console.log('moving')
         } 
          //e.checkVerticalAttack()
          e.checkBack()
@@ -211,7 +213,7 @@ function drawRivals(){ // FUNCIONA
 // RIVAL & JUGADOR
 
 function animatePlayer(){
-    if (frames%5==0){
+    if (frames%2==0){
         player1.animate++
         player2.animate++
         rivals.forEach(e => e.animate++)
@@ -411,7 +413,7 @@ function update(){
     frames++
     clearCanvas()
     field.draw()
-    drawRivals()//
+    drawRivals()
     animatePlayer()
     player1.x += player1.vx
     player1.y += player1.vy
@@ -425,12 +427,13 @@ function update(){
     drawHit2()
     checkColitions1()
     checkColitions2()
-    attackRivals()
     drawScore()
     winCheckP1()
     winCheckP2()
     newSpeed1()
     newSpeed2()
+    attackRivals()
 }
+
 interval = setInterval(update, 1000/24)
 createRivals()

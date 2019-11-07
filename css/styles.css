@@ -19,9 +19,9 @@ canvas{
 body{
     display:flex;
     flex-direction:column;
-    justify-content: center;
+    justify-content: center;/*
     background-image: url('img/wallpaperr.jpg');
-    background-size:cover;
+    background-size:cover;*/
 }
 .canvas-around{
     display:flex;

@@ -372,18 +372,21 @@ class Rival {
     }
 
     getDistance(potato){
-        let dx = this.cx - potato.cx
-        let dy = this.cy - potato.cy
+        let dx = this.cx - potato.x
+        let dy = this.cy - potato.y
         return Math.sqrt(Math.pow(dx,2)+Math.pow(dy,2))
     }
     
     checkAttack(){
-      if(this.getDistance(player1)>this.getDistance(player2) && distance < 100){
-        this.startAttack = true
+      if(this.getDistance(player1)>this.getDistance(player2)){
+          this.playernum = player2
+          if(this.getDistance(player2)<120){
+            this.startAttack = true        }
+      } else if (this.getDistance(player1)<this.getDistance(player2)){
         this.playernum = player1
-      } else if (this.getDistance(player1)<this.getDistance(player2) && distance < 100){
-        this.startAttack = true
-        this.playernum = player2
+        if(this.getDistance(player1)<120){
+          this.startAttack = true
+        }
       }
     }
     move(){
