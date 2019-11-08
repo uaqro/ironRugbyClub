@@ -267,6 +267,8 @@ function attackRivals(){ // FUNCIONA
          }
          if (frames%8===0){
             e.move()
+            console.log('se mueven')
+            console.log(e.startAttack)
         } 
          //e.checkVerticalAttack()
          e.checkBack()
@@ -489,8 +491,8 @@ function update(){
     player2.changePosition()
     player1.draw()
     player2.draw()
-    drawHit1()
-    drawHit2()
+    //drawHit1()
+    //drawHit2()
     checkColitions1()
     checkColitions2()
     drawScore()
