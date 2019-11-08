@@ -172,20 +172,12 @@ function winCheck(){
 
 // FUNCIONES DE RIVALES
 function createRivals(){ //FUNCIONA
-    let rivalXStart = [25, 350, 75, 200, 150, 250, 25, 75]
-    let rivalYStart = [canvas.height-200, canvas.height-400, canvas.height-500]
+    let rivalXStart = [25, 350, 150, 250, 150, 450, 125, 75]
+    let rivalYStart = [canvas.height-200, canvas.height-300, canvas.height-400]
     for(i=0; i<Math.floor((2/2)*3);i++){
         rivals.push(new Rival(rivalXStart[i], rivalYStart[i]))
         rivals.push(new Rival(rivalXStart[i] + (Math.random()*100)+50, rivalYStart[i]))
-        if (level >= 2 && i == 1){
         rivals.push(new Rival(rivalXStart[i] + (Math.random()*150)+150, rivalYStart[i]))
-        }
-        if (level >= 3 && i == 0){
-            rivals.push(new Rival(rivalXStart[i] + (Math.random()*150)+150, rivalYStart[i]))
-        }
-        if (level >= 4 && i == 2){
-            rivals.push(new Rival(rivalXStart[i] + (Math.random()*150)+150, rivalYStart[i]))
-        }
     }
 }
 function attackRivals(){ // FUNCIONA

@@ -119,30 +119,6 @@ function winP2(){
 }
 
 // CHECAR ESAS FUNCIONES 
-function drawHit1(){
-    if (counter1 == 0){
-        if(hit.display){
-            ctx.drawImage(hit, player1.x, player1.y, 150, 150)
-            counter1--
-        }
-        
-    } else if (counter1 == 0){
-        hit.display = false
-        return
-    }
-}
-function drawHit2(){
-    if (counter2 == 0){
-        if(hit.display){
-            ctx.drawImage(hit, player2.x, player2.y, 150, 150)
-            counter2--
-        }
-        
-    } else if (counter2 == 0){
-        hit.display = false
-        return
-    }
-}
 function drawScore(){ // NTE PARA EL MULTIJUGADOR
 
     //Score PLAYER1
