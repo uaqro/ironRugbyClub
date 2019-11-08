@@ -23,21 +23,28 @@ let counter = 0 //Frames para el hit display
 let tackles = 0;
 let tackleImage = new Image();
 tackleImage.src = 'img/tackle.png'
+let music = new Audio ()
+music.src = "img/gameMusic.mp3"
 
 // ** GAME FUNCTIONS **
 
 function startGame(){ 
     interval = setInterval(update, 1000/24)
+    music.play()
     createRivals()
+    
 }
 function clearCanvas(){ // YA FUNCIONA
     ctx.clearRect(0, 0, canvas.width, canvas.height)
 }
 function gameOver(){
+    music.src = 'img/Over.mp3'
+    music.play()
     clearInterval(interval)
     ctx.fillStyle = 'black'
     ctx.font = '50px VT323'
     ctx.fillText('Game Over',canvas.width/2-50, canvas.height/2)
+    
 }
 function checkColitions(){
     if (player.x < 25){   //Field boundaries
@@ -162,6 +169,8 @@ function winCheck(){
     }
     if (score>2000){
         clearInterval(interval)
+        music.src = 'win.mp3'
+        music.play()
         ctx.font = '50px VT323'
         ctx.fillStyle = 'black'
         ctx.fillText('Player1 Wins!',canvas.width/2-50, canvas.height/2)

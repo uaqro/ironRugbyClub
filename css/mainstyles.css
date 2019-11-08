@@ -7,6 +7,12 @@
     padding-right:36%;
     padding-top: 2%
 }
+.audio {
+    visibility: hidden;
+}
+.source {
+    visibility: hidden;
+}
 body{
     background-image: url('../img/wallpaperr.jpg');
     background-size:cover;

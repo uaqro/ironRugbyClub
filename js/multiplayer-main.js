@@ -31,10 +31,13 @@ tackleImage.src = 'img/tackle.png'
 const win1 = new Win()
 const win2 = new Win2()
 let framesAtWin;
+let music = new Audio ()
+music.src = "img/gameMusic.mp3"
 
 // ** GAME FUNCTIONS **
 
 function startGame(){ //SIRVE
+    music.play()
     interval = setInterval(update, 1000/24)
     createRivals()
 }
@@ -104,6 +107,8 @@ function checkColitions2(){
 }
 
 function winP1(){
+    music.src = 'win.mp3'
+    music.play()
     clearInterval(interval)
     ctx.fillStyle = 'black'
     ctx.font = '50px VT323'
@@ -111,6 +116,8 @@ function winP1(){
     win1.draw()    
 }
 function winP2(){
+    music.src = 'win.mp3'
+    music.play()
     clearInterval(interval)
     ctx.font = '50px VT323'
     ctx.fillStyle = 'black'
