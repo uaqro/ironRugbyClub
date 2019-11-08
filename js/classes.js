@@ -28,14 +28,13 @@ class gameField {
           
   }
 }
-
 class Player {
     constructor() {
         this.x = 200;
         this.y = canvas.height-75;
         this.width = 50; 
         this.height = 60;
-        this.animate = 4;
+        this.animate = 0;
         this.img = new Image();
         this.img.src = 'img/playerSprite.png';
         this.face = 0;
@@ -48,24 +47,23 @@ class Player {
         this.cx = this.x + (this.width/2)
         this.cy = this.y + (this.height/2)
         this.countdown = true;
-        this.animateArray = [0,1,2,3,2,1]
+        this.animateBool = true
   }
 
     draw(){ //1000*60
         
-        
-      this.animate
-      if(this.countdown){
-        if (this.animate>0){
-        this.animate--
-        } else if (this.animate==0){
-          this.countdown = false
+
+      if (this.animateBool && frames%2===0){
+        this.animate++
+        if (this.animate >3){
+          this.animate = 2
+          this.animateBool = false
         }
-      } else if(!this.countdown){
-        if (this.animate < 3){
-          this.animate++
-        } else if (this.animate > 3){
-          this.countdown = true
+      } else if(!this.animateBool && frames%2===0){
+        this.animate--
+        if (this.animate < 1){
+          this.animate = 0
+          this.animateBool = true
         }
       }
       switch(this.face){
@@ -161,7 +159,6 @@ class Player {
     if (this.speed>0.6){this.speed -=.5}
     this.vx = -(this.speed/Math.sqrt((this.speed**2)+(this.speed**2)))
     this.vy = -(this.speed/Math.sqrt((this.speed**2)+(this.speed**2)))
-    console.log('upLeft FUNCITON')
   }
   downLeft(){
     if (this.speed>0.6){this.speed -=.5}
@@ -222,7 +219,6 @@ class Player {
   turbo(){
     if (this.turboStatus){
       if (this.stamina>0){
-        console.log(this.stamina)
         this.speed +=2
         this.stamina -= 1
       } else{
@@ -250,8 +246,6 @@ class Player {
     return Math.sqrt(Math.pow(dx,2)+Math.pow(dy,2))
   }
 }
-
-
 class Rival {
     constructor(x, y){
       this.x = x;
@@ -274,7 +268,19 @@ class Rival {
     }
     //FUNCIONA
     draw(){ //1000*60
-      this.animate>3 ? this.animate = 0 : this.animate;
+      if (this.animateBool && frames%4===0){
+        this.animate++
+        if (this.animate >3){
+          this.animate = 2
+          this.animateBool = false
+        }
+      } else if(!this.animateBool && frames%4===0){
+        this.animate--
+        if (this.animate < 1){
+          this.animate = 0
+          this.animateBool = true
+        }
+      }
       switch(this.face){
         case 0:
           ctx.drawImage(
@@ -328,7 +334,6 @@ class Rival {
           break;
       }
     }
-
     changePosition() {
       if (this.x > player.x && this.x < player.x+player.width && this.y < player.y){
         this.face = 4 // down
@@ -348,7 +353,6 @@ class Rival {
         this.face = 6 // left
       }
     }
-
     isTouching(e) {
       // algo está tratando de ocupar el mismo espacio en canvas que flash
       return (
@@ -358,7 +362,6 @@ class Rival {
         this.y + this.height > e.y
       )
     }
-    
     checkBack(){ // OK ralentiza en 'y' durante 4 frames para la ilusión de ganar la espalda
       if (this.countback){ 
         if (player.y < this.y){ 
@@ -367,40 +370,16 @@ class Rival {
         }
       }
     }
-
     getDistance(){
       let dx = this.cx - player.cx
       let dy = this.cy - player.cy
       return Math.sqrt(Math.pow(dx,2)+Math.pow(dy,2))
     }
-    /*
-    jump(){
-
-      if(this.getDistance()<this.actionRadius + player.attackRadius){
-        let random = Math.floor(Math.random()*2)
-        let playerRivalVector = Math.atan(dy/dx)
-        if(random === 0){
-          this.x += 
-          this.y = 
-        } else if (random ===1){
-          this.x +=
-          this.y +=
-        }
-      }
-
-    }*/
-
-    // FUNCIÓN PARA CORRER COMO TARADO Y PASARSE AL UGADOR POR ARRIBA O POR ABAJO
-
-    /*tackleSprint(){
-
-    }*/
     checkVerticalAttack(){ // OK Chequea que el jugador esté cerca para atacarle en el eje de Y
       if (player.y < this.y + 100){
         this.startAttack = true
       }
     }
-
     move(){
       if (this.startAttack){
         if (player.x > this.x && player.y > this.y){

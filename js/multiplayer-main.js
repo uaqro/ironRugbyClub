@@ -28,25 +28,28 @@ let tackles1 = 0;
 let tackles2 = 0;
 let tackleImage = new Image();
 tackleImage.src = 'img/tackle.png'
-
+const win1 = new Win()
+const win2 = new Win2()
+let framesAtWin;
 
 // ** GAME FUNCTIONS **
 
 function startGame(){ //SIRVE
+    interval = setInterval(update, 1000/24)
     createRivals()
 }
 function clearCanvas(){ // SIRVE
     ctx.clearRect(0, 0, canvas.width, canvas.height)
 }
-function gameOver(){ // SIRVE
-    clearInterval(interval)
-}
 function checkColitions1(){
     if (player1.x < 25){   //Field boundaries
-        gameOver()
+        winP2()
     }
     if (player1.x + player1.width*0.75 > canvas.width-25){
-        gameOver()
+        winP2()
+    }
+    if (player1.y + player1.height*0.75 < 40){
+        winP2()
     }
     rivals.forEach((rival)=>{ //flagged
         if(player1.flagged(rival)){
@@ -56,16 +59,28 @@ function checkColitions1(){
             tackles1++
         }
         if (player1.tackled(rival)){ //tackled
-            gameOver()
+            winP2()
         }
     })
+    if (tackles1>3){
+        winP2()
+    }
+
+    if (player1.flagged(player2)){
+        if(!player2.attack && player1.y<138){
+            winP2()
+        }
+    }
 }
 function checkColitions2(){
     if (player2.x < 25){   //Field boundaries
-        gameOver()
+        winP1()
     }
     if (player2.x + player2.width*0.75 > canvas.width-25){
-        gameOver()
+        winP1()
+    }
+    if (player2.y< 40){
+        winP1()
     }
     rivals.forEach((rival)=>{ //flagged
         if(player2.flagged(rival)){
@@ -75,10 +90,34 @@ function checkColitions2(){
             tackles2++
         }
         if (player2.tackled(rival)){ //tackled
-            gameOver()
+            winP1()
         }
     })
+    if (tackles2 > 3){
+        winP1()
+    }
+    if (player2.flagged(player1)){
+        if(!player1.attack && player2.y<138){
+            winP1()
+        }
+    }
 }
+
+function winP1(){
+    clearInterval(interval)
+    ctx.fillStyle = 'black'
+    ctx.font = '50px VT323'
+    ctx.fillText('Player1 Wins!',canvas.width/2-50, canvas.height/2)
+    win1.draw()    
+}
+function winP2(){
+    clearInterval(interval)
+    ctx.font = '50px VT323'
+    ctx.fillStyle = 'black'
+    ctx.fillText('Player2 Wins!',canvas.width/2-50, canvas.height/2)
+    //win2.draw() 
+}
+
 // CHECAR ESAS FUNCIONES 
 function drawHit1(){
     if (counter1 == 0){
@@ -113,66 +152,121 @@ function drawScore(){ // NTE PARA EL MULTIJUGADOR
     ctx.fillRect(22,65,650,15);
     ctx.globalAlpha = 1.0;
     ctx.fillStyle = 'white';
-    ctx.font = '20px Arial'
+    ctx.font = '20px VT323'
     ctx.fillText(`Tackled P1:`, 22, 75)
     ctx.fillText(`Tackled P2:`, 275, 75)
 
-    if(score>100){
+    if(player1.score>250){
         ctx.beginPath();
         ctx.arc((canvas.width/2)-75 , canvas.height/2, 25, 0, 2 * Math.PI, false);
-        ctx.fillStyle = 'green';
+        ctx.fillStyle = 'yellow';
         ctx.fill();
         ctx.lineWidth = 2;
         ctx.strokeStyle = '#FFFFFF';
         ctx.stroke();
     }
-    if(score > 200){
+    if(player1.score > 500){
         ctx.beginPath();
         ctx.arc((canvas.width/2) -25 , canvas.height/2, 25, 0, 2 * Math.PI, false);
-        ctx.fillStyle = 'green';
+        ctx.fillStyle = 'yellow';
         ctx.fill();
         ctx.lineWidth = 2;
         ctx.strokeStyle = '#FFFFFF';
         ctx.stroke();
     }
-    if(score > 300){
+    if(player1.score > 750){
         ctx.beginPath();
         ctx.arc((canvas.width/2) +25 , canvas.height/2, 25, 0, 2 * Math.PI, false);
-        ctx.fillStyle = 'green';
+        ctx.fillStyle = 'yellow';
         ctx.fill();
         ctx.lineWidth = 2;
         ctx.strokeStyle = '#FFFFFF';
         ctx.stroke();
     }
-    if(score > 400){
+    if(player1.score > 1000){
         ctx.beginPath();
         ctx.arc((canvas.width/2) +75 , canvas.height/2, 25, 0, 2 * Math.PI, false);
-        ctx.fillStyle = 'green';
+        ctx.fillStyle = 'yellow';
+        ctx.fill();
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = '#FFFFFF';
+        ctx.stroke();
+    }
+    if(player2.score > 250){
+        ctx.beginPath();
+        ctx.arc((canvas.width/2) -75 , canvas.height/2, 25, 0, 2 * Math.PI, false);
+        ctx.fillStyle = 'red';
+        ctx.fill();
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = '#FFFFFF';
+        ctx.stroke();
+    }
+    if(player2.score > 500){
+        ctx.beginPath();
+        ctx.arc((canvas.width/2) -25 , canvas.height/2, 25, 0, 2 * Math.PI, false);
+        ctx.fillStyle = 'red';
+        ctx.fill();
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = '#FFFFFF';
+        ctx.stroke();
+    }
+    if(player2.score > 750){
+        ctx.beginPath();
+        ctx.arc((canvas.width/2) +25 , canvas.height/2, 25, 0, 2 * Math.PI, false);
+        ctx.fillStyle = 'red';
+        ctx.fill();
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = '#FFFFFF';
+        ctx.stroke();
+    }
+    if(player2.score > 1000){
+        ctx.beginPath();
+        ctx.arc((canvas.width/2) +75 , canvas.height/2, 25, 0, 2 * Math.PI, false);
+        ctx.fillStyle = 'red';
         ctx.fill();
         ctx.lineWidth = 2;
         ctx.strokeStyle = '#FFFFFF';
         ctx.stroke();
     }
     if(tackles1 >=1){
-        ctx.drawImage(tackleImage, 60, 48, 40, 40)
+        ctx.drawImage(tackleImage, 120, 48, 40, 40)
     }
     if(tackles1 >=2){
-        ctx.drawImage(tackleImage, 110, 48, 40, 40)
+        ctx.drawImage(tackleImage, 170, 48, 40, 40)
     }
     if(tackles1 >=3){
-        ctx.drawImage(tackleImage, 160, 48, 40, 40)
+        ctx.drawImage(tackleImage, 220, 48, 40, 40)
+    }
+    if(tackles2 >=1){
+        ctx.drawImage(tackleImage, 450, 48, 40, 40)
+    }
+    if(tackles2 >=2){
+        ctx.drawImage(tackleImage, 500, 48, 40, 40)
+    }
+    if(tackles2 >=3){
+        ctx.drawImage(tackleImage, 550, 48, 40, 40)
     }
 }
 function winCheckP1(){
-    if (player1.y <= 138){
-        attack = false
-        player1.score +=5
+    if (player1.attack){
+        if (player1.y <= 120){
+            player2.attack = false
+            player1.score +=5
+        }
     }
+    if(player1.score>1050){
+        winP1()
+    }   
 }
 function winCheckP2(){
-    if (player2.y <= 138){
-        attack = false
-        player2.score += 5
+    if (player2.attack){
+        if (player2.y <= 120){
+            player1.attack = false
+            player2.score += 5
+        }
+    }
+    if(player2.score>1050){
+        winP2()
     }
 }
 
@@ -187,7 +281,6 @@ function createRivals(){ //FUNCIONA
         rivals.push(new Rival(rivalXStart[i] + (Math.random()*150)+150, rivalYStart[i]))
     }
 }
-
 function attackRivals(){ // FUNCIONA    
     rivals.forEach((e)=> {
          if (frames%2===0){
@@ -198,7 +291,6 @@ function attackRivals(){ // FUNCIONA
          }
          if (frames%8===0){
             e.move()
-            console.log('moving')
         } 
          //e.checkVerticalAttack()
          e.checkBack()
@@ -214,9 +306,6 @@ function drawRivals(){ // FUNCIONA
 
 function animatePlayer(){
     if (frames%2==0){
-        player1.animate++
-        player2.animate++
-        rivals.forEach(e => e.animate++)
         field.fans.animate++
     }
 }
@@ -311,7 +400,6 @@ function aux2(arr1, arr2) {
     cacheString = arr1.join('')
     keyCombine2(cacheString, specialString)
 }
-
 function newSpeed1(){
     if (player1.vy >= 0 && player1.vx ==0){
         player1.vy = player1.speed // DOWN
@@ -406,6 +494,8 @@ document.onkeydown = function listener(e){
     }else if (e.keyCode === 82) { // R
         specialArray2[1] = 1
         aux2(cacheArray2, specialArray2)
+    } else if (e.keyCode ===13){
+        startGame()
     }
 }
 // ** FRAMES & UPDATES **
@@ -420,8 +510,8 @@ function update(){
     player2.x += player2.vx
     player2.y += player2.vy
     player1.changePosition()
-    player1.draw()
     player2.changePosition()
+    player1.draw()
     player2.draw()
     drawHit1()
     drawHit2()
@@ -434,6 +524,3 @@ function update(){
     newSpeed2()
     attackRivals()
 }
-
-interval = setInterval(update, 1000/24)
-createRivals()

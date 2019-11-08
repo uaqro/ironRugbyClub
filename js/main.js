@@ -24,10 +24,10 @@ let tackles = 0;
 let tackleImage = new Image();
 tackleImage.src = 'img/tackle.png'
 
-
 // ** GAME FUNCTIONS **
 
-function startGame(){ //HAY QUE COMPLETAR LA FUNCIÓN CON LISTENERS ETC
+function startGame(){ 
+    interval = setInterval(update, 1000/24)
     createRivals()
 }
 function clearCanvas(){ // YA FUNCIONA
@@ -35,6 +35,9 @@ function clearCanvas(){ // YA FUNCIONA
 }
 function gameOver(){
     clearInterval(interval)
+    ctx.fillStyle = 'black'
+    ctx.font = '50px VT323'
+    ctx.fillText('Game Over',canvas.width/2-50, canvas.height/2)
 }
 function checkColitions(){
     if (player.x < 25){   //Field boundaries
@@ -43,17 +46,21 @@ function checkColitions(){
     if (player.x + player.width*0.75 > canvas.width-25){
         gameOver()
     }
+    if (player.y < 40){
+        gameOver()
+    }
+    if (tackles > 3){
+        gameOver()
+    }
     rivals.forEach((rival)=>{ //flagged
         if(player.flagged(rival)){
             if (player.speed > 0){player.speed -=0.25}
             hit.display = true
             counter = 10
-            console.log('touch')
             tackles++
         }
         if (player.tackled(rival)){ //tackled
             gameOver()
-            console.log('tackled')
         }
     })
 }
@@ -61,7 +68,6 @@ function drawHit(){
     if (counter == 0){
         if(hit.display){
             ctx.drawImage(hit, player.x, player.y, 150, 150)
-            console.log('golpe!')
             counter--
         }
         
@@ -71,20 +77,14 @@ function drawHit(){
     }
 }
 function drawScore(){ // YA FUNCIONA
-    /*ctx.strokeStyle = 'red'
-    ctx.beginPath();
-    ctx.moveTo(25,100);
-    ctx.lineTo(25,350);
-    ctx.stroke();*/
     ctx.globalAlpha = 0.3;
     ctx.fillStyle = 'black'
     ctx.fillRect(22,65,450,15);
     ctx.globalAlpha = 1.0;
     ctx.fillStyle = 'white';
-    ctx.font = '20px Arial'
+    ctx.font = '20px VT323'
     ctx.fillText(`Score:`, 22, 75)
     ctx.fillText(`Tackled:`, 275, 75)
-    //ctx.fillText(`Level: ${level}`, 570, 30)
     ctx.beginPath();
     ctx.arc(100, 68, 10, 0, 2 * Math.PI, false);
     ctx.fillStyle = 'red';
@@ -110,7 +110,7 @@ function drawScore(){ // YA FUNCIONA
     ctx.lineWidth = 2;
     ctx.strokeStyle = '#FFFFFF';
     ctx.stroke();
-    if(score>100){
+    if(score>250){
         ctx.beginPath();
         ctx.arc(100, 68, 10, 0, 2 * Math.PI, false);
         ctx.fillStyle = 'green';
@@ -119,7 +119,7 @@ function drawScore(){ // YA FUNCIONA
         ctx.strokeStyle = '#FFFFFF';
         ctx.stroke();
     }
-    if(score > 200){
+    if(score > 500){
         ctx.beginPath();
         ctx.arc(150, 68, 10, 0, 2 * Math.PI, false);
         ctx.fillStyle = 'green';
@@ -128,7 +128,7 @@ function drawScore(){ // YA FUNCIONA
         ctx.strokeStyle = '#FFFFFF';
         ctx.stroke();
     }
-    if(score > 300){
+    if(score > 1000){
         ctx.beginPath();
         ctx.arc(200, 68, 10, 0, 2 * Math.PI, false);
         ctx.fillStyle = 'green';
@@ -137,7 +137,7 @@ function drawScore(){ // YA FUNCIONA
         ctx.strokeStyle = '#FFFFFF';
         ctx.stroke();
     }
-    if(score > 400){
+    if(score > 2000){
         ctx.beginPath();
         ctx.arc(250, 68, 10, 0, 2 * Math.PI, false);
         ctx.fillStyle = 'green';
@@ -157,36 +157,18 @@ function drawScore(){ // YA FUNCIONA
     }
 }
 function winCheck(){
-    if (player.y <= 138){
+    if (player.y <= 120){
         score += 5
     }
-    // FUNCIONES DE JUEGO EN GENERAL
-    /* FUNCIÓN DE GANAR
-    if (score>10.000){
-        clearInterval(interval)
-        level++
-        startGame()
-    }
     if (score>2000){
-        ctx.fillStyle = 'green'
-        ctx.fillText = ('You won!', canvas.width/2, canvas.height/2)
-        fillRect(0, 0, canvas.width, canvas.height)
         clearInterval(interval)
+        ctx.font = '50px VT323'
+        ctx.fillStyle = 'black'
+        ctx.fillText('Player1 Wins!',canvas.width/2-50, canvas.height/2)
     }
-    */
 }
 
-/*
-function dontStack(){
-    
-    rivals.forEach((i,e){
-        if(this.isTouching){
-            this.speed = 0;
-        }
-    })
-    
-}
-*/
+
 
 // FUNCIONES DE RIVALES
 function createRivals(){ //FUNCIONA
@@ -225,12 +207,9 @@ function attackRivals(){ // FUNCIONA
 function drawRivals(){ // FUNCIONA
     rivals.forEach((e, i) => e.draw())
 }
-
 // RIVAL & JUGADOR
 function animatePlayer(){
     if (frames%5==0){
-        player.animate++
-        rivals.forEach(e => e.animate++)
         field.fans.animate++
     }
 }
@@ -240,40 +219,28 @@ function keyCombine(movesArray, specialArray){
     // upleft
     if (cache[cache.length-1].indexOf('1') == 0 && cache[cache.length-2].indexOf('1')== 3){
         player.upLeft()
-        console.log('upleft')
     } else if (cache[cache.length-1].indexOf('1')==3 && cache[cache.length-2].indexOf('1')==0){
         player.upLeft()
-        console.log('upleft')
     }else if (cache[cache.length-1].indexOf('1')==0 && cache[cache.length-2].indexOf('1')==0){
         player.left()
-        console.log('left')
     } else if (cache[cache.length-1].indexOf('1')==3 && cache[cache.length-2].indexOf('1')==3){
         player.up()
-        console.log('up')
     } else if (cache[cache.length-1].indexOf('1')==2 && cache[cache.length-2].indexOf('1')==0){
         player.downLeft()
-        console.log('downleft')
     } else if (cache[cache.length-1].indexOf('1')==0 && cache[cache.length-2].indexOf('1')==2){
         player.downLeft()
-        console.log('downleft')
     } else if (cache[cache.length-1].indexOf('1')==1 && cache[cache.length-2].indexOf('1')==3){
         player.upRight()
-        console.log('upright')
     } else if (cache[cache.length-1].indexOf('1')==3 && cache[cache.length-2].indexOf('1')==1){
         player.upRight()
-        console.log('upright')
     } else if (cache[cache.length-1].indexOf('1')==2 && cache[cache.length-2].indexOf('1')==1){
         player.downRight()
-        console.log('downright')
     } else if (cache[cache.length-1].indexOf('1')==1 && cache[cache.length-2].indexOf('1')==2){
         player.downRight()
-        console.log('downright')
     } else if (cache[cache.length-1].indexOf('1')==1 && cache[cache.length-2].indexOf('1')==1){
         player.right()
-        console.log('right')
     } else if (cache[cache.length-1].indexOf('1')==2 && cache[cache.length-2].indexOf('1')==2){
         player.down()
-        console.log('down')
     } 
     if (specialArray.indexOf('1')==0){
         if (player.turboStatus){
@@ -284,14 +251,11 @@ function keyCombine(movesArray, specialArray){
         player.turbo()
     } else if (specialArray.indexOf('1')==1){
         player.run()
-        console.log('speedup')
-        console.log(player.speed)
     }
 }
 function aux(arr1, arr2) {
     specialString = arr2.join('')
     cacheString = arr1.join('')
-    console.log('hello')
     keyCombine(cacheString, specialString)
 }
 function newSpeed(){
@@ -342,6 +306,8 @@ document.onkeydown = function listener(e){
     }else if (e.keyCode === 32) {
         specialArray[1] = 1
         aux(cacheArray, specialArray)
+    } else if (e.keyCode === 13){
+        startGame()
     }
 }
 // ** FRAMES & UPDATES **
@@ -365,5 +331,4 @@ function update(){
     winCheck()
     newSpeed()
 }
-interval = setInterval(update, 1000/24)
-createRivals()
+

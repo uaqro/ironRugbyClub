@@ -23,3 +23,21 @@ body{
     width: 200px;
     height: 200px;
 }
+
+.buttons img{
+    transition: box-shadow .3s;
+    /*width: 300px;
+    height: 500px;
+    margin: 50px;
+    border-radius:10px;
+    border: 1px solid #ccc;
+    background: #fff;*/
+    float: left;
+    
+  }
+  .buttons img:hover{
+    box-shadow: 0 0 11px yellow; 
+  }
+  /*.buttons:hover img:last-of-type{
+    box-shadow: 0 0 11px yellow; 
+  }*/

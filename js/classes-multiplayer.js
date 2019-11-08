@@ -28,14 +28,13 @@ class gameField {
           
   }
 }
-
 class Player {
     constructor() {
         this.x = 200;
         this.y = canvas.height-75;
         this.width = 50; 
         this.height = 60;
-        this.animate = 4;
+        this.animate = 0;
         this.img = new Image();
         this.img.src = 'img/playerSprite.png';
         this.face = 0;
@@ -48,27 +47,26 @@ class Player {
         this.cx = this.x + (this.width/2)
         this.cy = this.y + (this.height/2)
         this.countdown = true;
-        this.animateArray = [0,1,2,3,2,1]
         this.score = 0
+        this.animateBool = true;
+        this.attack = true;
   }
 
     draw(){ //1000*60
-        
-        
-      this.animate
-      if(this.countdown){
-        if (this.animate>0){
-        this.animate--
-        } else if (this.animate==0){
-          this.countdown = false
+      if (this.animateBool && frames%2===0){
+        this.animate++
+        if (this.animate >3){
+          this.animate = 2
+          this.animateBool = false
         }
-      } else if(!this.countdown){
-        if (this.animate < 3){
-          this.animate++
-        } else if (this.animate > 3){
-          this.countdown = true
+      } else if(!this.animateBool && frames%2===0){
+        this.animate--
+        if (this.animate < 1){
+          this.animate = 0
+          this.animateBool = true
         }
       }
+
       switch(this.face){
         case 0:
           ctx.drawImage(
@@ -162,7 +160,6 @@ class Player {
     if (this.speed>0.6){this.speed -=.5}
     this.vx = -(this.speed/Math.sqrt((this.speed**2)+(this.speed**2)))
     this.vy = -(this.speed/Math.sqrt((this.speed**2)+(this.speed**2)))
-    console.log('upLeft FUNCITON')
   }
   downLeft(){
     if (this.speed>0.6){this.speed -=.5}
@@ -179,7 +176,6 @@ class Player {
     this.vy = (this.speed/Math.sqrt((this.speed**2)+(this.speed**2)))
     this.vx = (this.speed/Math.sqrt((this.speed**2)+(this.speed**2)))
   }
-  //
   left(){
     if (this.speed>0.6){this.speed -=.5}
     this.vy = 0;
@@ -200,7 +196,6 @@ class Player {
     this.vx = 0
     this.vy = -this.speed
   }
-
   run(){
     if (this.speed>2){ //Límite de velocidad
       this.speed = 2
@@ -218,12 +213,10 @@ class Player {
       this.speed +=0.65
     }
   }
-
   // HAY QUE CHECAR LA DURACIÓN DEL SPRINT
   turbo(){
     if (this.turboStatus){
       if (this.stamina>0){
-        console.log(this.stamina)
         this.speed +=2
         this.stamina -= 1
       } else{
@@ -233,7 +226,6 @@ class Player {
       this.speed -=2
     }
   }
-
   flagged(e){
     return (
       this.x+(this.width*0.25) < e.x+e.width&&
@@ -252,14 +244,13 @@ class Player {
   }
 }
 class Player2 extends Player{
-  constructor(y,width,height, animate, face, vx, vy, stamina, speed, turboStatus, attackRadius, cx, cy, countdown, animateArray, score){
-    super(y,width,height, animate, face, vx, vy, stamina, speed, turboStatus, attackRadius, cx, cy, countdown, animateArray,score)
+  constructor(y,width,height, animate, face, vx, vy, stamina, speed, turboStatus, attackRadius, cx, cy, countdown, score, attack, animateBool){
+    super(y,width,height, animate, face, vx, vy, stamina, speed, turboStatus, attackRadius, cx, cy, countdown,score, attack, animateBool)
     this.x = 750;
     this.img = new Image();
     this.img.src = 'img/player2Sprite.png';
   }
 }
-
 class Rival {
     constructor(x, y){
       this.x = x;
@@ -280,10 +271,23 @@ class Rival {
       this.cx = this.x + (this.width/2)
       this.cy = this.y + (this.height/2)
       this.playernum;
+      this.animateBool
     }
     //FUNCIONA
     draw(){ //1000*60
-      this.animate>3 ? this.animate = 0 : this.animate;
+      if (this.animateBool && frames%2===0){
+        this.animate++
+        if (this.animate >3){
+          this.animate = 2
+          this.animateBool = false
+        }
+      } else if(!this.animateBool && frames%2===0){
+        this.animate--
+        if (this.animate < 1){
+          this.animate = 0
+          this.animateBool = true
+        }
+      }
       switch(this.face){
         case 0:
           ctx.drawImage(
@@ -337,7 +341,6 @@ class Rival {
           break;
       }
     }
-
     changePosition() {
       if (this.startAttack){ 
         if (this.x > this.playernum.x && this.x < this.playernum.x+this.playernum.width && this.y < this.playernum.y){
@@ -359,7 +362,6 @@ class Rival {
         }
       }
     }
-    
     checkBack(){ // OK ralentiza en 'y' durante 4 frames para la ilusión de ganar la espalda
       if (this.startAttack){
         if (this.countback){ 
@@ -370,13 +372,11 @@ class Rival {
         }
       }
     }
-
     getDistance(potato){
         let dx = this.cx - potato.x
         let dy = this.cy - potato.y
         return Math.sqrt(Math.pow(dx,2)+Math.pow(dy,2))
     }
-    
     checkAttack(){
       if(this.getDistance(player1)>this.getDistance(player2)){
           this.playernum = player2
@@ -451,4 +451,30 @@ class Rival {
       this.vy = -this.speed
     }
     
+}
+class Win{
+  constructor(){
+    this.x = (canvas.width/2) - (this.width/2)
+    this.y= (canvas.width/2) - (this.hieght/2);
+    this.width = 200;
+    this.height = 200;
+    this.img = new Image()
+    this.img.src = 'img/p1wins.png'
+    this.img.onload = () =>{
+      this.draw()
+    }
+  }
+  draw(){
+    ctx.drawImage(this.img, this.x, this.y, this.width, this.height)
+  }
+}
+class Win2 extends Win{
+  constructor(x,y,width,height){
+    super(x, y, width, height)
+    this.img = new Image()
+    this.img.src = 'img/p2wins.png'
+    this.img.onload = () => {
+      this.draw()
+    }
+  }
 }

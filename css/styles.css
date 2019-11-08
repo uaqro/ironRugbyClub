@@ -1,9 +1,13 @@
+@import url('https://fonts.googleapis.com/css?family=VT323&display=swap');
 canvas{
     display:flex;
     align-items: center;
     align-self:center;
     justify-content:center;
     height: 75vh;
+    border: 5px solid orange;
+    background-image: url('../img/inst.png');
+    background-size:1000px 600px;
 }
 
 .header img{
@@ -15,13 +19,30 @@ canvas{
     background-color: #1A10FF;
     margin-left: 14.5%;
     margin-right: 14.5%;
+    display:flex;
+    justify-content:space-evenly;
+    align-items:center;
+}
+.header button{
+    width: 145px;
+    height: 145px;
+    border: 5px solid orange;
+    background-color: #1A10FF;
+    font-family: 'VT323';
+    font-size: 2em;
+    color: white;
+    
+
+}
+.header button:hover{
+    box-shadow: 0 0 11px yellow; 
 }
 body{
     display:flex;
     flex-direction:column;
-    justify-content: center;/*
-    background-image: url('img/wallpaperr.jpg');
-    background-size:cover;*/
+    justify-content: center;
+    background-image: url('../img/wallpaperr.jpg');
+    background-size:cover;
 }
 .canvas-around{
     display:flex;
